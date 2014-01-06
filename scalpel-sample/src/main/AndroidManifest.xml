@@ -1,0 +1,29 @@
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.jakewharton.scalpel.sample"
+    android:versionCode="1"
+    >
+
+  <uses-sdk
+      android:minSdkVersion="14"
+      android:targetSdkVersion="19"
+      />
+
+  <application
+      android:label="@string/application_name"
+      android:icon="@drawable/application_icon"
+      android:allowBackup="true"
+      >
+    <activity
+        android:name=".SampleActivity"
+        android:label="@string/launcher_name"
+        >
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+  </application>
+
+</manifest>

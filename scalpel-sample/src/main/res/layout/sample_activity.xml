@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.jakewharton.scalpel.ScalpelFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scalpel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="#FF800000"
+      android:orientation="vertical"
+      android:padding="20dp"
+      >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF008000"
+        android:text="@string/application_name"
+        />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF000080"
+        android:layout_marginTop="20dp"
+        >
+      <TableRow
+          android:background="#FF808000"
+          android:paddingBottom="5dp"
+          >
+        <TextView
+            android:background="#FF008080"
+            android:layout_marginRight="10dp"
+            android:text="One Fish"
+            />
+        <TextView
+            android:background="#FF008080"
+            android:text="Two Fish"
+            />
+      </TableRow>
+      <TableRow
+          android:background="#FF800080"
+          >
+        <TextView
+            android:background="#FF008080"
+            android:layout_marginRight="10dp"
+            android:text="Red Fish"
+            />
+        <TextView
+            android:background="#FF008080"
+            android:text="Blue Fish"
+            />
+      </TableRow>
+    </TableLayout>
+  </LinearLayout>
+</com.jakewharton.scalpel.ScalpelFrameLayout>
