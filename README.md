@@ -10,7 +10,19 @@ A surgical debugging tool to uncover the layers under your app.
 Usage
 -----
 
-TODO...
+Place a `ScalpelFrameLayout` at the root of your hierarchy.
+
+ * Enable the 3D interaction with `setLayerInteractionEnabled(boolean)`.
+ * Toggle wireframe display with `setDrawViews(boolean)`.
+
+When interaction is enabled the following gestures are supported:
+
+ * Single touch: Controls the rotation of the model.
+ * Two finger vertical pinch: Adjust zoom.
+ * Two finger horizontal pinch: Adjust layer spacing.
+
+If you are using the Gradle-based build system, you can wrap this view group around your activity
+layouts only in the debug builds.
 
 
 

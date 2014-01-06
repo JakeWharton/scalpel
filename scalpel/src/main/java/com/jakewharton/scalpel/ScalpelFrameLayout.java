@@ -23,13 +23,13 @@ import static android.view.MotionEvent.ACTION_POINTER_UP;
 import static android.view.MotionEvent.INVALID_POINTER_ID;
 
 /**
- * Renders your view hierarchy as an interactive 3D visualization.
+ * Renders your view hierarchy as an interactive 3D visualization of layers.
  * <p>
- * Interactions:
+ * Interactions supported:
  * <ul>
  * <li>Single touch: controls the rotation of the model.</li>
- * <li>Two finger vertical drag: Adjust zoom.</li>
- * <li>Two finger horizontal drag: Adjust layer spacing.</li>
+ * <li>Two finger vertical pinch: Adjust zoom.</li>
+ * <li>Two finger horizontal pinch: Adjust layer spacing.</li>
  * </ul>
  */
 public class ScalpelFrameLayout extends FrameLayout {
@@ -99,6 +99,7 @@ public class ScalpelFrameLayout extends FrameLayout {
     viewBorderPaint.setStyle(STROKE);
   }
 
+  /** Set whether or not the 3D view layer interaction is enabled. */
   public void setLayerInteractionEnabled(boolean enabled) {
     if (this.enabled != enabled) {
       this.enabled = enabled;
@@ -107,10 +108,12 @@ public class ScalpelFrameLayout extends FrameLayout {
     }
   }
 
+  /** Returns true when 3D view layer interaction is enabled. */
   public boolean isLayerInteractionEnabled() {
     return enabled;
   }
 
+  /** Set whether the view layers draw their contents. When false, only wireframes are shown. */
   public void setDrawViews(boolean drawViews) {
     if (this.drawViews != drawViews) {
       this.drawViews = drawViews;
@@ -118,6 +121,7 @@ public class ScalpelFrameLayout extends FrameLayout {
     }
   }
 
+  /** Returns true when view layers draw their contents. */
   public boolean isDrawingViews() {
     return drawViews;
   }
