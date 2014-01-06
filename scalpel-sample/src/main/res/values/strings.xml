@@ -2,5 +2,5 @@
   <string name="application_name">Scalpel Sample</string>
   <string name="launcher_name">Scalpel</string>
 
-  <string name="enabled">Enabled:</string>
+  <string name="first_run">Touch to rotate.\nPinch vertically to zoom.\nPinch horizontally to stretch.</string>
 </resources>
