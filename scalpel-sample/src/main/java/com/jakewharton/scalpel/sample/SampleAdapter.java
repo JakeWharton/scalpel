@@ -11,7 +11,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.squareup.picasso.Picasso;
 
-public class SampleAdapter extends BaseAdapter {
+final class SampleAdapter extends BaseAdapter {
   private static final Item[] ITEMS = {
       new Item("http://i.imgur.com/CqmBjo5.jpg", "Lorem ipsum", "Et vulputate"),
       new Item("http://i.imgur.com/zkaAooq.jpg", "Dolor sit", "Felis placerat"),
