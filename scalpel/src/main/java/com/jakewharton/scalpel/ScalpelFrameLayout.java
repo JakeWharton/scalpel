@@ -65,6 +65,7 @@ public class ScalpelFrameLayout extends FrameLayout {
   private final float slop;
 
   private boolean enabled;
+  private boolean drawViews = true;
 
   private int pointerOne = INVALID_POINTER_ID;
   private float lastOneX;
@@ -108,6 +109,17 @@ public class ScalpelFrameLayout extends FrameLayout {
 
   public boolean isLayerInteractionEnabled() {
     return enabled;
+  }
+
+  public void setDrawViews(boolean drawViews) {
+    if (this.drawViews != drawViews) {
+      this.drawViews = drawViews;
+      invalidate();
+    }
+  }
+
+  public boolean isDrawingViews() {
+    return drawViews;
   }
 
   @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -321,7 +333,9 @@ public class ScalpelFrameLayout extends FrameLayout {
       viewBoundsRect.set(0, 0, view.getWidth(), view.getHeight());
       canvas.drawRect(viewBoundsRect, viewBorderPaint);
 
-      view.draw(canvas);
+      if (drawViews) {
+        view.draw(canvas);
+      }
 
       canvas.restoreToCount(viewSaveCount);
 
