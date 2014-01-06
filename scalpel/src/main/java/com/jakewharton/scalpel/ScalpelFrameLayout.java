@@ -7,7 +7,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -92,8 +91,7 @@ public class ScalpelFrameLayout extends FrameLayout {
 
   public ScalpelFrameLayout(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
-    DisplayMetrics dm = context.getResources().getDisplayMetrics();
-    density = dm.density;
+    density = context.getResources().getDisplayMetrics().density;
     slop = ViewConfiguration.get(context).getScaledTouchSlop();
 
     viewBorderPaint.setColor(BORDER_COLOR);
