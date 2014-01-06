@@ -295,7 +295,7 @@ public class ScalpelFrameLayout extends FrameLayout {
       View view = viewQueue.removeFirst();
       int level = levelQueue.removeFirst();
 
-      // Hide any children, if any.
+      // Hide any children.
       if (view instanceof ViewGroup) {
         ViewGroup viewGroup = (ViewGroup) view;
         int count = viewGroup.getChildCount();
