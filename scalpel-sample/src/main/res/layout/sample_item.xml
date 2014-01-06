@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- This layout is intentionally sub-optimal to showcase the library. -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    >
+  <FrameLayout
+      android:layout_width="@dimen/list_item_height"
+      android:layout_height="@dimen/list_item_height"
+      android:foreground="@drawable/image_border_overlay"
+      android:background="#222"
+      >
+    <ImageView
+        android:id="@+id/item_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="#f00"
+        />
+  </FrameLayout>
+  <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:layout_marginLeft="8dp"
+      android:orientation="vertical"
+      >
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textAppearance="@android:style/TextAppearance.Holo.Widget.ActionBar.Title"
+        tools:text="This is the title"
+        />
+    <TextView
+        android:id="@+id/item_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textAppearance="@android:style/TextAppearance.Holo.Widget.ActionBar.Subtitle"
+        tools:text="This is the subtitle"
+        />
+  </LinearLayout>
+</LinearLayout>

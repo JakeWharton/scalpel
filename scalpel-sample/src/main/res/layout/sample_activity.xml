@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- This layout is intentionally sub-optimal to showcase the library. -->
 <com.jakewharton.scalpel.ScalpelFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scalpel"
@@ -9,49 +10,61 @@
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="#FF800000"
       android:orientation="vertical"
-      android:padding="20dp"
       >
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FF008000"
-        android:text="@string/application_name"
-        />
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FF000080"
-        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        android:padding="20dp"
         >
-      <TableRow
-          android:background="#FF808000"
-          android:paddingBottom="5dp"
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="#FF008000"
+          android:text="@string/application_name"
+          />
+      <TableLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="#FF000080"
+          android:layout_marginTop="20dp"
           >
-        <TextView
-            android:background="#FF008080"
-            android:layout_marginRight="10dp"
-            android:text="One Fish"
-            />
-        <TextView
-            android:background="#FF008080"
-            android:text="Two Fish"
-            />
-      </TableRow>
-      <TableRow
-          android:background="#FF800080"
-          >
-        <TextView
-            android:background="#FF008080"
-            android:layout_marginRight="10dp"
-            android:text="Red Fish"
-            />
-        <TextView
-            android:background="#FF008080"
-            android:text="Blue Fish"
-            />
-      </TableRow>
-    </TableLayout>
+        <TableRow
+            android:background="#FF808000"
+            android:paddingBottom="5dp"
+            >
+          <TextView
+              android:background="#FF008080"
+              android:layout_marginRight="10dp"
+              android:text="One Fish"
+              />
+          <TextView
+              android:background="#FF008080"
+              android:text="Two Fish"
+              />
+        </TableRow>
+        <TableRow
+            android:background="#FF800080"
+            >
+          <TextView
+              android:background="#FF008080"
+              android:layout_marginRight="10dp"
+              android:text="Red Fish"
+              />
+          <TextView
+              android:background="#FF008080"
+              android:text="Blue Fish"
+              />
+        </TableRow>
+      </TableLayout>
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/item_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
   </LinearLayout>
 </com.jakewharton.scalpel.ScalpelFrameLayout>

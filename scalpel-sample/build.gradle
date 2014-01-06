@@ -8,6 +8,9 @@ apply plugin: 'android'
 
 dependencies {
   compile project(':scalpel')
+  compile 'com.jakewharton:butterknife:4.0.+'
+  compile 'com.squareup.picasso:picasso:2.1.+'
+  compile 'com.android.support:support-v4:19.0.+'
 }
 
 android {

@@ -3,11 +3,14 @@ package com.jakewharton.scalpel.sample;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import com.jakewharton.scalpel.ScalpelFrameLayout;
 
 import static android.app.ActionBar.DISPLAY_SHOW_CUSTOM;
@@ -15,14 +18,18 @@ import static android.app.ActionBar.DISPLAY_SHOW_TITLE;
 import static android.widget.Toast.LENGTH_LONG;
 
 public final class SampleActivity extends Activity {
-  private ScalpelFrameLayout scalpelView;
+  @InjectView(R.id.scalpel) ScalpelFrameLayout scalpelView;
+  @InjectView(R.id.item_pager) ViewPager pagerView;
+
   private boolean first = true;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.sample_activity);
-    scalpelView = (ScalpelFrameLayout) findViewById(R.id.scalpel);
+    ButterKnife.inject(this);
+
+    pagerView.setAdapter(new SamplePagerAdapter(this));
 
     Switch enabledSwitch = new Switch(this);
     enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

@@ -3,7 +3,7 @@ Scalpel
 
 A surgical debugging tool to uncover the layers under your app.
 
-Blah blah blah...
+![](images/sample.gif)
 
 
 

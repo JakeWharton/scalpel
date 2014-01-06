@@ -9,9 +9,12 @@
       android:targetSdkVersion="19"
       />
 
+  <uses-permission android:name="android.permission.INTERNET"/>
+
   <application
       android:label="@string/application_name"
       android:icon="@drawable/application_icon"
+      android:theme="@style/Theme.Scalpel"
       android:allowBackup="true"
       >
     <activity
