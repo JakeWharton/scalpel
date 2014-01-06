@@ -1,3 +1,5 @@
+import com.android.builder.BuilderConstants;
+
 buildscript {
   dependencies {
     classpath 'com.android.tools.build:gradle:0.7.+'
@@ -17,6 +19,16 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_7
     targetCompatibility JavaVersion.VERSION_1_7
+  }
+}
+
+android.libraryVariants.all { variant ->
+  def name = variant.buildType.name
+  if (!BuilderConstants.DEBUG.equals(name)) {
+    def task = project.tasks.create "jar${name.capitalize()}", Jar
+    task.dependsOn variant.javaCompile
+    task.from variant.javaCompile.destinationDir
+    artifacts.add('archives', task);
   }
 }
 
