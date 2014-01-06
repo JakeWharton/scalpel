@@ -116,7 +116,7 @@ public class ScalpelFrameLayout extends FrameLayout {
     return enabled || super.onInterceptTouchEvent(ev);
   }
 
-  @Override public boolean onTouchEvent(MotionEvent event) {
+  @Override public boolean onTouchEvent(@SuppressWarnings("NullableProblems") MotionEvent event) {
     if (!enabled) {
       return super.onTouchEvent(event);
     }
