@@ -245,7 +245,6 @@ public class ScalpelFrameLayout extends FrameLayout {
           // Clear pointer two and tracking.
           pointerTwo = INVALID_POINTER_ID;
           multiTouchTracking = TRACKING_UNKNOWN;
-          break;
         } else if (pointerTwo == pointerId) {
           if (DEBUG) log("Lost pointer 2 (%s).", pointerTwo);
           pointerTwo = INVALID_POINTER_ID;
