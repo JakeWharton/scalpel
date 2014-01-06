@@ -165,65 +165,60 @@ public class ScalpelFrameLayout extends FrameLayout {
             }
           }
         } else {
-          for (int i = 0, count = event.getPointerCount(); i < count; i++) {
-            int pointerId = event.getPointerId(i);
-            float eventX = event.getX(i);
-            float eventY = event.getY(i);
-            float dx;
-            float dy;
-            if (pointerOne == pointerId) {
-              dx = eventX - lastOneX;
-              dy = eventY - lastOneY;
-            } else if (pointerTwo == pointerId) {
-              dx = eventX - lastTwoX;
-              dy = eventY - lastTwoY;
+          // We know there's two pointers and we only care about pointerOne and pointerTwo
+          int pointerOneIndex = event.findPointerIndex(pointerOne);
+          int pointerTwoIndex = event.findPointerIndex(pointerTwo);
+
+          float xOne = event.getX(pointerOneIndex);
+          float yOne = event.getY(pointerOneIndex);
+          float xTwo = event.getX(pointerTwoIndex);
+          float yTwo = event.getY(pointerTwoIndex);
+
+          float dxOne = xOne - lastOneX;
+          float dyOne = yOne - lastOneY;
+          float dxTwo = xTwo - lastTwoX;
+          float dyTwo = yTwo - lastTwoY;
+
+          if (multiTouchTracking == TRACKING_UNKNOWN) {
+            float adx = Math.abs(dxOne) + Math.abs(dxTwo);
+            float ady = Math.abs(dyOne) + Math.abs(dyTwo);
+
+            if (adx > slop * 2 || ady > slop * 2) {
+              if (adx > ady) {
+                // Left/right movement wins. Track horizontal.
+                multiTouchTracking = TRACKING_HORIZONTALLY;
+              } else {
+                // Up/down movement wins. Track vertical.
+                multiTouchTracking = TRACKING_VERTICALLY;
+              }
+            }
+          }
+
+          if (multiTouchTracking == TRACKING_VERTICALLY) {
+            if (yOne >= yTwo) {
+              zoom += dyOne / getHeight() - dyTwo / getHeight();
             } else {
-              continue; // Not one of the two tracking pointers.
+              zoom += dyTwo / getHeight() - dyOne / getHeight();
             }
 
-            if (multiTouchTracking == TRACKING_UNKNOWN) {
-              // Multiple pointers but unsure of vertical or horizontal gesture.
-              // This branch does not update the 'last' fields so we can wait until a slop is met.
-              float adx = Math.abs(dx);
-              float ady = Math.abs(dy);
-              if (adx > slop || ady > slop) {
-                if (adx > ady) {
-                  // Left/right movement wins. Track horizontal.
-                  multiTouchTracking = TRACKING_HORIZONTALLY;
-                } else {
-                  // Up/down movement wins. Track vertical.
-                  multiTouchTracking = TRACKING_VERTICALLY;
-                }
-              }
+            zoom = Math.min(Math.max(zoom, ZOOM_MIN), ZOOM_MAX);
+            invalidate();
+          } else if (multiTouchTracking == TRACKING_HORIZONTALLY) {
+            if (xOne >= xTwo) {
+              spacing += (dxOne / getWidth() * SPACING_MAX) - (dxTwo / getWidth() * SPACING_MAX);
+            } else {
+              spacing += (dxTwo / getWidth() * SPACING_MAX) - (dxOne / getWidth() * SPACING_MAX);
             }
 
-            if (multiTouchTracking == TRACKING_VERTICALLY) {
-              // Multiple pointers doing a vertical zoom gesture.
-              zoom += dy / getHeight();
-              zoom = Math.min(Math.max(zoom, ZOOM_MIN), ZOOM_MAX);
-              invalidate();
+            spacing = Math.min(Math.max(spacing, SPACING_MIN), SPACING_MAX);
+            invalidate();
+          }
 
-              if (pointerOne == pointerId) {
-                lastOneX = eventX;
-                lastOneY = eventY;
-              } else if (pointerTwo == pointerId) {
-                lastTwoX = eventX;
-                lastTwoY = eventY;
-              }
-            } else if (multiTouchTracking == TRACKING_HORIZONTALLY) {
-              // Multiple pointers doing a horizontal spacing gesture.
-              spacing += (dx / getWidth()) * SPACING_DEFAULT;
-              spacing = Math.min(Math.max(spacing, SPACING_MIN), SPACING_MAX);
-              invalidate();
-
-              if (pointerOne == pointerId) {
-                lastOneX = eventX;
-                lastOneY = eventY;
-              } else if (pointerTwo == pointerId) {
-                lastTwoX = eventX;
-                lastTwoY = eventY;
-              }
-            }
+          if (multiTouchTracking != TRACKING_UNKNOWN) {
+            lastOneX = xOne;
+            lastOneY = yOne;
+            lastTwoX = xTwo;
+            lastTwoY = yTwo;
           }
         }
         break;
