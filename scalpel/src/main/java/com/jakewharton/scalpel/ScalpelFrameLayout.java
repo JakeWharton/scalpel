@@ -301,7 +301,7 @@ public class ScalpelFrameLayout extends FrameLayout {
     canvas.scale(zoom, zoom, cx, cy);
 
     if (!layeredViewQueue.isEmpty()) {
-      throw new AssertionError("Queues are not empty.");
+      throw new AssertionError("View queue is not empty.");
     }
 
     // We don't want to be rendered so seed the queue with our children.
