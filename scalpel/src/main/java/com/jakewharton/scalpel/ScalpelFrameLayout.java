@@ -1,6 +1,7 @@
 package com.jakewharton.scalpel;
 
 import android.content.Context;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -75,6 +76,7 @@ public class ScalpelFrameLayout extends FrameLayout {
 
   private boolean enabled;
   private boolean drawViews = true;
+  private boolean drawIds = false;
 
   private int pointerOne = INVALID_POINTER_ID;
   private float lastOneX;
@@ -133,6 +135,19 @@ public class ScalpelFrameLayout extends FrameLayout {
   /** Returns true when view layers draw their contents. */
   public boolean isDrawingViews() {
     return drawViews;
+  }
+
+  /** Set whether the view layers draw their IDs. */
+  public void setDrawIds(boolean drawIds) {
+    if (this.drawIds != drawIds) {
+      this.drawIds = drawIds;
+      invalidate();
+    }
+  }
+
+  /** Returns true when view layers draw their IDs. */
+  public boolean isDrawingIds() {
+    return drawIds;
   }
 
   @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -347,6 +362,15 @@ public class ScalpelFrameLayout extends FrameLayout {
 
       if (drawViews) {
         view.draw(canvas);
+      }
+
+      if (drawIds && view.getId() != NO_ID) {
+        try {
+          String name = getResources().getResourceEntryName(view.getId());
+          canvas.drawText(name, 5, 15, viewBorderPaint);
+        } catch (NotFoundException e) {
+          throw new AssertionError(e);
+        }
       }
 
       canvas.restoreToCount(viewSaveCount);
