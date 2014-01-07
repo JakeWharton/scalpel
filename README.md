@@ -24,6 +24,8 @@ When interaction is enabled the following gestures are supported:
 If you are using the Gradle-based build system, you can wrap this view group around your activity
 layouts only in the debug builds.
 
+*Note: There are known text rendering issues prior to Android 4.4 that cannot be fixed. Sorry.*
+
 
 
 Download
