@@ -49,6 +49,16 @@ public class ScalpelFrameLayout extends FrameLayout {
   private static final int BORDER_COLOR = 0xFF888888;
   private static final boolean DEBUG = false;
 
+  private static class ViewLayer {
+    View view;
+    int level;
+
+    ViewLayer(View v, int l) {
+      view = v;
+      level = l;
+    }
+  }
+
   private static void log(String message, Object... args) {
     Log.d("Scalpel", String.format(message, args));
   }
@@ -58,8 +68,7 @@ public class ScalpelFrameLayout extends FrameLayout {
   private final Camera camera = new Camera();
   private final Matrix matrix = new Matrix();
   private final int[] location = new int[2];
-  private final Deque<View> viewQueue = new ArrayDeque<>();
-  private final Deque<Integer> levelQueue = new ArrayDeque<>();
+  private final Deque<ViewLayer> viewLayerQueue = new ArrayDeque<>();
 
   private final float density;
   private final float slop;
@@ -291,20 +300,20 @@ public class ScalpelFrameLayout extends FrameLayout {
     canvas.concat(matrix);
     canvas.scale(zoom, zoom, cx, cy);
 
-    if (!viewQueue.isEmpty() || !levelQueue.isEmpty()) {
+    if (!viewLayerQueue.isEmpty()) {
       throw new AssertionError("Queues are not empty.");
     }
 
     // We don't want to be rendered so seed the queue with our children.
     for (int i = 0, count = getChildCount(); i < count; i++) {
-      viewQueue.add(getChildAt(i));
-      levelQueue.add(0);
+      viewLayerQueue.add(new ViewLayer(getChildAt(i), 0));
     }
     // TODO Multiple queues suck. Deque of levels represented as Deque<View>, maybe?
 
-    while (!viewQueue.isEmpty()) {
-      View view = viewQueue.removeFirst();
-      int level = levelQueue.removeFirst();
+    while (!viewLayerQueue.isEmpty()) {
+      ViewLayer viewLayer = viewLayerQueue.removeFirst();
+      View view = viewLayer.view;
+      int level = viewLayer.level;
 
       // Hide any children.
       if (view instanceof ViewGroup) {
@@ -352,8 +361,7 @@ public class ScalpelFrameLayout extends FrameLayout {
           //noinspection ConstantConditions,MagicConstant
           child.setVisibility(newVisibility);
           if (newVisibility == VISIBLE) {
-            viewQueue.addLast(child);
-            levelQueue.add(level + 1);
+            viewLayerQueue.addLast(new ViewLayer(child,level+1));
           }
         }
       }
