@@ -1,6 +1,7 @@
 package com.jakewharton.scalpel;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Camera;
 import android.graphics.Canvas;
@@ -71,6 +72,7 @@ public class ScalpelFrameLayout extends FrameLayout {
   private final int[] location = new int[2];
   private final Deque<LayeredView> layeredViewQueue = new ArrayDeque<>();
 
+  private final Resources res;
   private final float density;
   private final float slop;
 
@@ -103,6 +105,7 @@ public class ScalpelFrameLayout extends FrameLayout {
 
   public ScalpelFrameLayout(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
+    res = context.getResources();
     density = context.getResources().getDisplayMetrics().density;
     slop = ViewConfiguration.get(context).getScaledTouchSlop();
 
@@ -366,7 +369,7 @@ public class ScalpelFrameLayout extends FrameLayout {
 
       if (drawIds && view.getId() != NO_ID) {
         try {
-          String name = getResources().getResourceEntryName(view.getId());
+          String name = res.getResourceEntryName(view.getId());
           canvas.drawText(name, 5, 15, viewBorderPaint);
         } catch (NotFoundException e) {
           throw new AssertionError(e);
