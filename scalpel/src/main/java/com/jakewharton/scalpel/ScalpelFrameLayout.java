@@ -50,8 +50,8 @@ public class ScalpelFrameLayout extends FrameLayout {
   private static final boolean DEBUG = false;
 
   private static class LayeredView {
-    View view;
-    int layer;
+    final View view;
+    final int layer;
 
     LayeredView(View v, int l) {
       view = v;
@@ -360,7 +360,7 @@ public class ScalpelFrameLayout extends FrameLayout {
           //noinspection ConstantConditions,MagicConstant
           child.setVisibility(newVisibility);
           if (newVisibility == VISIBLE) {
-            layeredViewQueue.addLast(new LayeredView(child,layer+1));
+            layeredViewQueue.addLast(new LayeredView(child, layer + 1));
           }
         }
       }
