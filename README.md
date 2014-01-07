@@ -64,4 +64,4 @@ License
     limitations under the License.
 
 
- [1]: http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=om.jakewharton.scalpel&a=scalpel&v=LATEST&c=jar
+ [1]: http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.jakewharton.scalpel&a=scalpel&v=LATEST
