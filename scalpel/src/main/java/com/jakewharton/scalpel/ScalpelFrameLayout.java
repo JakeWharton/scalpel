@@ -7,6 +7,8 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -20,6 +22,8 @@ import java.util.Deque;
 
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 import static android.graphics.Paint.Style.STROKE;
+import static android.graphics.Typeface.NORMAL;
+import static android.os.Build.VERSION_CODES.JELLY_BEAN;
 import static android.view.MotionEvent.ACTION_DOWN;
 import static android.view.MotionEvent.ACTION_POINTER_UP;
 import static android.view.MotionEvent.INVALID_POINTER_ID;
@@ -122,6 +126,9 @@ public class ScalpelFrameLayout extends FrameLayout {
     viewBorderPaint.setStyle(STROKE);
     viewBorderPaint.setTextSize(textSize);
     viewBorderPaint.setShadowLayer(1, -1, 1, CHROME_SHADOW_COLOR);
+    if (Build.VERSION.SDK_INT >= JELLY_BEAN) {
+      viewBorderPaint.setTypeface(Typeface.create("sans-serif-condensed", NORMAL));
+    }
   }
 
   /** Set whether or not the 3D view layer interaction is enabled. */
