@@ -64,6 +64,17 @@ public final class SampleActivity extends Activity {
             return true;
           }
         });
+    menu.add("Draw IDs")
+        .setCheckable(true)
+        .setChecked(scalpelView.isDrawingIds())
+        .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+          @Override public boolean onMenuItemClick(MenuItem item) {
+            boolean checked = !item.isChecked();
+            item.setChecked(checked);
+            scalpelView.setDrawIds(checked);
+            return true;
+          }
+        });
     return true;
   }
 }
