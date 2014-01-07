@@ -49,18 +49,18 @@ public class ScalpelFrameLayout extends FrameLayout {
   private static final int BORDER_COLOR = 0xFF888888;
   private static final boolean DEBUG = false;
 
+  private static void log(String message, Object... args) {
+    Log.d("Scalpel", String.format(message, args));
+  }
+
   private static class LayeredView {
     final View view;
     final int layer;
 
-    LayeredView(View v, int l) {
-      view = v;
-      layer = l;
+    LayeredView(View view, int layer) {
+      this.view = view;
+      this.layer = layer;
     }
-  }
-
-  private static void log(String message, Object... args) {
-    Log.d("Scalpel", String.format(message, args));
   }
 
   private final Rect viewBoundsRect = new Rect();
