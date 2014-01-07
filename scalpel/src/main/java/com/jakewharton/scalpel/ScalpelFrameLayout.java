@@ -49,13 +49,13 @@ public class ScalpelFrameLayout extends FrameLayout {
   private static final int BORDER_COLOR = 0xFF888888;
   private static final boolean DEBUG = false;
 
-  private static class ViewLayer {
+  private static class LayeredView {
     View view;
-    int level;
+    int layer;
 
-    ViewLayer(View v, int l) {
+    LayeredView(View v, int l) {
       view = v;
-      level = l;
+      layer = l;
     }
   }
 
@@ -68,7 +68,7 @@ public class ScalpelFrameLayout extends FrameLayout {
   private final Camera camera = new Camera();
   private final Matrix matrix = new Matrix();
   private final int[] location = new int[2];
-  private final Deque<ViewLayer> viewLayerQueue = new ArrayDeque<>();
+  private final Deque<LayeredView> layeredViewQueue = new ArrayDeque<>();
 
   private final float density;
   private final float slop;
@@ -300,20 +300,19 @@ public class ScalpelFrameLayout extends FrameLayout {
     canvas.concat(matrix);
     canvas.scale(zoom, zoom, cx, cy);
 
-    if (!viewLayerQueue.isEmpty()) {
+    if (!layeredViewQueue.isEmpty()) {
       throw new AssertionError("Queues are not empty.");
     }
 
     // We don't want to be rendered so seed the queue with our children.
     for (int i = 0, count = getChildCount(); i < count; i++) {
-      viewLayerQueue.add(new ViewLayer(getChildAt(i), 0));
+      layeredViewQueue.add(new LayeredView(getChildAt(i), 0));
     }
-    // TODO Multiple queues suck. Deque of levels represented as Deque<View>, maybe?
 
-    while (!viewLayerQueue.isEmpty()) {
-      ViewLayer viewLayer = viewLayerQueue.removeFirst();
-      View view = viewLayer.view;
-      int level = viewLayer.level;
+    while (!layeredViewQueue.isEmpty()) {
+      LayeredView layeredView = layeredViewQueue.removeFirst();
+      View view = layeredView.view;
+      int layer = layeredView.layer;
 
       // Hide any children.
       if (view instanceof ViewGroup) {
@@ -333,11 +332,11 @@ public class ScalpelFrameLayout extends FrameLayout {
 
       int viewSaveCount = canvas.save();
 
-      // Scale the layer level translation by the rotation amount.
+      // Scale the layer index translation by the rotation amount.
       float translateShowX = rotationY / ROTATION_MAX;
       float translateShowY = rotationX / ROTATION_MAX;
-      float tx = level * spacing * density * translateShowX;
-      float ty = level * spacing * density * translateShowY;
+      float tx = layer * spacing * density * translateShowX;
+      float ty = layer * spacing * density * translateShowY;
       canvas.translate(tx, -ty);
 
       view.getLocationInWindow(location);
@@ -361,7 +360,7 @@ public class ScalpelFrameLayout extends FrameLayout {
           //noinspection ConstantConditions,MagicConstant
           child.setVisibility(newVisibility);
           if (newVisibility == VISIBLE) {
-            viewLayerQueue.addLast(new ViewLayer(child,level+1));
+            layeredViewQueue.addLast(new LayeredView(child,layer+1));
           }
         }
       }
