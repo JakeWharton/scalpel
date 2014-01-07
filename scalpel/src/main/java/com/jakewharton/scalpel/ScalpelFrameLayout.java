@@ -2,7 +2,6 @@ package com.jakewharton.scalpel;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.content.res.Resources.NotFoundException;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -10,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -48,7 +48,10 @@ public class ScalpelFrameLayout extends FrameLayout {
   private static final int SPACING_DEFAULT = 25;
   private static final int SPACING_MIN = 10;
   private static final int SPACING_MAX = 100;
-  private static final int BORDER_COLOR = 0xFF888888;
+  private static final int CHROME_COLOR = 0xFF888888;
+  private static final int CHROME_SHADOW_COLOR = 0xFF000000;
+  private static final int TEXT_OFFSET_DP = 2;
+  private static final int TEXT_SIZE_DP = 10;
   private static final boolean DEBUG = false;
 
   private static void log(String message, Object... args) {
@@ -71,10 +74,13 @@ public class ScalpelFrameLayout extends FrameLayout {
   private final Matrix matrix = new Matrix();
   private final int[] location = new int[2];
   private final Deque<LayeredView> layeredViewQueue = new ArrayDeque<>();
+  private final SparseArray<String> idNames = new SparseArray<>();
 
   private final Resources res;
   private final float density;
   private final float slop;
+  private final float textOffset;
+  private final float textSize;
 
   private boolean enabled;
   private boolean drawViews = true;
@@ -109,8 +115,13 @@ public class ScalpelFrameLayout extends FrameLayout {
     density = context.getResources().getDisplayMetrics().density;
     slop = ViewConfiguration.get(context).getScaledTouchSlop();
 
-    viewBorderPaint.setColor(BORDER_COLOR);
+    textSize = TEXT_SIZE_DP * density;
+    textOffset = TEXT_OFFSET_DP * density;
+
+    viewBorderPaint.setColor(CHROME_COLOR);
     viewBorderPaint.setStyle(STROKE);
+    viewBorderPaint.setTextSize(textSize);
+    viewBorderPaint.setShadowLayer(1, -1, 1, CHROME_SHADOW_COLOR);
   }
 
   /** Set whether or not the 3D view layer interaction is enabled. */
@@ -367,12 +378,10 @@ public class ScalpelFrameLayout extends FrameLayout {
         view.draw(canvas);
       }
 
-      if (drawIds && view.getId() != NO_ID) {
-        try {
-          String name = res.getResourceEntryName(view.getId());
-          canvas.drawText(name, 5, 15, viewBorderPaint);
-        } catch (NotFoundException e) {
-          throw new AssertionError(e);
+      if (drawIds) {
+        int id = view.getId();
+        if (id != NO_ID) {
+          canvas.drawText(nameForId(id), textOffset, textSize, viewBorderPaint);
         }
       }
 
@@ -394,5 +403,14 @@ public class ScalpelFrameLayout extends FrameLayout {
     }
 
     canvas.restoreToCount(saveCount);
+  }
+
+  private String nameForId(int id) {
+    String name = idNames.get(id);
+    if (name == null) {
+      name = res.getResourceEntryName(id);
+      idNames.put(id, name);
+    }
+    return name;
   }
 }
