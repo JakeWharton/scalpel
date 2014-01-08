@@ -63,12 +63,17 @@ public class ScalpelFrameLayout extends FrameLayout {
   }
 
   private static class LayeredView {
-    final View view;
-    final int layer;
+    View view;
+    int layer;
 
-    LayeredView(View view, int layer) {
+    void set(View view, int layer) {
       this.view = view;
       this.layer = layer;
+    }
+
+    void clear() {
+      view = null;
+      layer = -1;
     }
   }
 
@@ -79,6 +84,11 @@ public class ScalpelFrameLayout extends FrameLayout {
   private final int[] location = new int[2];
   private final Deque<LayeredView> layeredViewQueue = new ArrayDeque<>();
   private final SparseArray<String> idNames = new SparseArray<>();
+  private final Pool<LayeredView> layeredViewPool = new Pool<LayeredView>(25) {
+    @Override protected LayeredView newObject() {
+      return new LayeredView();
+    }
+  };
 
   private final Resources res;
   private final float density;
@@ -342,13 +352,19 @@ public class ScalpelFrameLayout extends FrameLayout {
 
     // We don't want to be rendered so seed the queue with our children.
     for (int i = 0, count = getChildCount(); i < count; i++) {
-      layeredViewQueue.add(new LayeredView(getChildAt(i), 0));
+      LayeredView layeredView = layeredViewPool.obtain();
+      layeredView.set(getChildAt(i), 0);
+      layeredViewQueue.add(layeredView);
     }
 
     while (!layeredViewQueue.isEmpty()) {
       LayeredView layeredView = layeredViewQueue.removeFirst();
       View view = layeredView.view;
       int layer = layeredView.layer;
+
+      // Restore the object to the pool for use later.
+      layeredView.clear();
+      layeredViewPool.restore(layeredView);
 
       // Hide any children.
       if (view instanceof ViewGroup) {
@@ -403,7 +419,9 @@ public class ScalpelFrameLayout extends FrameLayout {
           //noinspection ConstantConditions,MagicConstant
           child.setVisibility(newVisibility);
           if (newVisibility == VISIBLE) {
-            layeredViewQueue.addLast(new LayeredView(child, layer + 1));
+            LayeredView childLayeredView = layeredViewPool.obtain();
+            childLayeredView.set(child, layer + 1);
+            layeredViewQueue.add(childLayeredView);
           }
         }
       }
@@ -419,5 +437,26 @@ public class ScalpelFrameLayout extends FrameLayout {
       idNames.put(id, name);
     }
     return name;
+  }
+
+  private static abstract class Pool<T> {
+    private final Deque<T> pool;
+
+    Pool(int initialSize) {
+      pool = new ArrayDeque<T>(initialSize);
+      for (int i = 0; i < initialSize; i++) {
+        pool.addLast(newObject());
+      }
+    }
+
+    T obtain() {
+      return pool.isEmpty() ? newObject() : pool.removeLast();
+    }
+
+    void restore(T instance) {
+      pool.addLast(instance);
+    }
+
+    protected abstract T newObject();
   }
 }
