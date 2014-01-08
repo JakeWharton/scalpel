@@ -82,8 +82,8 @@ public class ScalpelFrameLayout extends FrameLayout {
   private final Camera camera = new Camera();
   private final Matrix matrix = new Matrix();
   private final int[] location = new int[2];
-  private final Deque<LayeredView> layeredViewQueue = new ArrayDeque<>();
   private final SparseArray<String> idNames = new SparseArray<>();
+  private final Deque<LayeredView> layeredViewQueue = new ArrayDeque<>();
   private final Pool<LayeredView> layeredViewPool = new Pool<LayeredView>(25) {
     @Override protected LayeredView newObject() {
       return new LayeredView();
@@ -98,7 +98,7 @@ public class ScalpelFrameLayout extends FrameLayout {
 
   private boolean enabled;
   private boolean drawViews = true;
-  private boolean drawIds = false;
+  private boolean drawIds;
 
   private int pointerOne = INVALID_POINTER_ID;
   private float lastOneX;
