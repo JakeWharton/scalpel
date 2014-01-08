@@ -2,6 +2,7 @@ package com.jakewharton.scalpel;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -434,10 +435,10 @@ public class ScalpelFrameLayout extends FrameLayout {
     String name = idNames.get(id);
     if (name == null) {
       try {
-			  name = res.getResourceEntryName(id);
-			} catch (NotFoundException e) {
-				name = String.format("0x%8x", id);
-			}
+        name = res.getResourceEntryName(id);
+      } catch (NotFoundException e) {
+        name = String.format("0x%8x", id);
+      }
       idNames.put(id, name);
     }
     return name;
