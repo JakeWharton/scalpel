@@ -33,14 +33,14 @@ Download
 
 Download [the latest JAR][1] or grab via Gradle:
 ```groovy
-compile 'com.jakewharton.scalpel:scalpel:1.0.0'
+compile 'com.jakewharton.scalpel:scalpel:1.1.0'
 ```
 or Maven:
 ```xml
 <dependency>
     <groupId>com.jakewharton.scalpel</groupId>
     <artifactId>scalpel</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
