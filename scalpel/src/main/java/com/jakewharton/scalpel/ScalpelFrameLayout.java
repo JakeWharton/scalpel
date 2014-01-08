@@ -433,7 +433,11 @@ public class ScalpelFrameLayout extends FrameLayout {
   private String nameForId(int id) {
     String name = idNames.get(id);
     if (name == null) {
-      name = res.getResourceEntryName(id);
+      try {
+			  name = res.getResourceEntryName(id);
+			} catch (NotFoundException e) {
+				name = String.format("0x%8x", id);
+			}
       idNames.put(id, name);
     }
     return name;
