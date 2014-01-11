@@ -39,9 +39,9 @@ compile 'com.jakewharton.scalpel:scalpel:1.1.1'
 or Maven:
 ```xml
 <dependency>
-    <groupId>com.jakewharton.scalpel</groupId>
-    <artifactId>scalpel</artifactId>
-    <version>1.1.1</version>
+  <groupId>com.jakewharton.scalpel</groupId>
+  <artifactId>scalpel</artifactId>
+  <version>1.1.1</version>
 </dependency>
 ```
 
