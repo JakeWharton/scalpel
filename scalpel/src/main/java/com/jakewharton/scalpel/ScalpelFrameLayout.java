@@ -448,7 +448,7 @@ public class ScalpelFrameLayout extends FrameLayout {
     private final Deque<T> pool;
 
     Pool(int initialSize) {
-      pool = new ArrayDeque<T>(initialSize);
+      pool = new ArrayDeque<>(initialSize);
       for (int i = 0; i < initialSize; i++) {
         pool.addLast(newObject());
       }
