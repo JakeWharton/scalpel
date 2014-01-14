@@ -18,10 +18,10 @@ import static android.app.ActionBar.DISPLAY_SHOW_TITLE;
 import static android.widget.Toast.LENGTH_LONG;
 
 public final class SampleActivity extends Activity {
+  private static boolean first = true;
+
   @InjectView(R.id.scalpel) ScalpelFrameLayout scalpelView;
   @InjectView(R.id.item_pager) ViewPager pagerView;
-
-  private boolean first = true;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
