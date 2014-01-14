@@ -57,6 +57,7 @@ public class ScalpelFrameLayout extends FrameLayout {
   private static final int CHROME_SHADOW_COLOR = 0xFF000000;
   private static final int TEXT_OFFSET_DP = 2;
   private static final int TEXT_SIZE_DP = 10;
+  private static final int CHILD_COUNT_ESTIMATION = 25;
   private static final boolean DEBUG = false;
 
   private static void log(String message, Object... args) {
@@ -85,7 +86,7 @@ public class ScalpelFrameLayout extends FrameLayout {
   private final int[] location = new int[2];
   private final SparseArray<String> idNames = new SparseArray<>();
   private final Deque<LayeredView> layeredViewQueue = new ArrayDeque<>();
-  private final Pool<LayeredView> layeredViewPool = new Pool<LayeredView>(25) {
+  private final Pool<LayeredView> layeredViewPool = new Pool<LayeredView>(CHILD_COUNT_ESTIMATION) {
     @Override protected LayeredView newObject() {
       return new LayeredView();
     }
@@ -114,7 +115,7 @@ public class ScalpelFrameLayout extends FrameLayout {
   private float zoom = ZOOM_DEFAULT;
   private float spacing = SPACING_DEFAULT;
 
-  private int[] visibilities = new int[50];
+  private int[] visibilities = new int[CHILD_COUNT_ESTIMATION];
 
   public ScalpelFrameLayout(Context context) {
     this(context, null);
