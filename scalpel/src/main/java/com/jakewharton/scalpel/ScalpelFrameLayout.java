@@ -85,6 +85,7 @@ public class ScalpelFrameLayout extends FrameLayout {
   private final Camera camera = new Camera();
   private final Matrix matrix = new Matrix();
   private final int[] location = new int[2];
+  private final BitSet visibilities = new BitSet(CHILD_COUNT_ESTIMATION);
   private final SparseArray<String> idNames = new SparseArray<>();
   private final Deque<LayeredView> layeredViewQueue = new ArrayDeque<>();
   private final Pool<LayeredView> layeredViewPool = new Pool<LayeredView>(CHILD_COUNT_ESTIMATION) {
@@ -115,8 +116,6 @@ public class ScalpelFrameLayout extends FrameLayout {
   private float rotationX = ROTATION_DEFAULT_X;
   private float zoom = ZOOM_DEFAULT;
   private float spacing = SPACING_DEFAULT;
-
-  private BitSet visibilities = new BitSet(CHILD_COUNT_ESTIMATION);
 
   public ScalpelFrameLayout(Context context) {
     this(context, null);
