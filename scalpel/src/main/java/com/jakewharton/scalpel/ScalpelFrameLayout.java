@@ -19,6 +19,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import java.util.ArrayDeque;
+import java.util.BitSet;
 import java.util.Deque;
 
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
@@ -115,7 +116,7 @@ public class ScalpelFrameLayout extends FrameLayout {
   private float zoom = ZOOM_DEFAULT;
   private float spacing = SPACING_DEFAULT;
 
-  private int[] visibilities = new int[CHILD_COUNT_ESTIMATION];
+  private BitSet visibilities = new BitSet(CHILD_COUNT_ESTIMATION);
 
   public ScalpelFrameLayout(Context context) {
     this(context, null);
@@ -368,19 +369,17 @@ public class ScalpelFrameLayout extends FrameLayout {
       layeredView.clear();
       layeredViewPool.restore(layeredView);
 
-      // Hide any children.
+      // Hide any visible children.
       if (view instanceof ViewGroup) {
         ViewGroup viewGroup = (ViewGroup) view;
-        int count = viewGroup.getChildCount();
-        if (count > visibilities.length) {
-          visibilities = new int[count];
-          if (DEBUG) log("Grow visibilities array to %s.", count);
-        }
-        for (int i = 0; i < count; i++) {
+        visibilities.clear();
+        for (int i = 0, count = viewGroup.getChildCount(); i < count; i++) {
           View child = viewGroup.getChildAt(i);
           //noinspection ConstantConditions
-          visibilities[i] = child.getVisibility();
-          child.setVisibility(INVISIBLE);
+          if (child.getVisibility() == VISIBLE) {
+            visibilities.set(i);
+            child.setVisibility(INVISIBLE);
+          }
         }
       }
 
@@ -412,15 +411,14 @@ public class ScalpelFrameLayout extends FrameLayout {
 
       canvas.restoreToCount(viewSaveCount);
 
-      // Restore any children and queue any visible ones for later drawing.
+      // Restore any hidden children and queue them for later drawing.
       if (view instanceof ViewGroup) {
         ViewGroup viewGroup = (ViewGroup) view;
         for (int i = 0, count = viewGroup.getChildCount(); i < count; i++) {
-          View child = viewGroup.getChildAt(i);
-          int newVisibility = visibilities[i];
-          //noinspection ConstantConditions,MagicConstant
-          child.setVisibility(newVisibility);
-          if (newVisibility == VISIBLE) {
+          if (visibilities.get(i)) {
+            View child = viewGroup.getChildAt(i);
+            //noinspection ConstantConditions
+            child.setVisibility(VISIBLE);
             LayeredView childLayeredView = layeredViewPool.obtain();
             childLayeredView.set(child, layer + 1);
             layeredViewQueue.add(childLayeredView);
