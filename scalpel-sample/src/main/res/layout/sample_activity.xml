@@ -66,5 +66,37 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         />
+
+    <!--
+     - The three children of this view occupy the entire size. In order to be drawn properly, they
+     - should be broken out onto three separate levels.
+    -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        >
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="#10ffffff"
+          android:gravity="left"
+          android:text="Left"
+          />
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="#10ffffff"
+          android:gravity="right"
+          android:text="Right"
+          />
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:gravity="center_horizontal"
+          android:background="#10ffffff"
+          android:text="Center"
+          />
+    </FrameLayout>
   </LinearLayout>
 </com.jakewharton.scalpel.ScalpelFrameLayout>
