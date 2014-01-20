@@ -19,8 +19,10 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import java.util.ArrayDeque;
-import java.util.BitSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.List;
 
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 import static android.graphics.Paint.Style.STROKE;
@@ -58,26 +60,10 @@ public class ScalpelFrameLayout extends FrameLayout {
   private static final int CHROME_SHADOW_COLOR = 0xFF000000;
   private static final int TEXT_OFFSET_DP = 2;
   private static final int TEXT_SIZE_DP = 10;
-  private static final int CHILD_COUNT_ESTIMATION = 25;
   private static final boolean DEBUG = false;
 
   private static void log(String message, Object... args) {
     Log.d("Scalpel", String.format(message, args));
-  }
-
-  private static class LayeredView {
-    View view;
-    int layer;
-
-    void set(View view, int layer) {
-      this.view = view;
-      this.layer = layer;
-    }
-
-    void clear() {
-      view = null;
-      layer = -1;
-    }
   }
 
   private final Rect viewBoundsRect = new Rect();
@@ -85,14 +71,8 @@ public class ScalpelFrameLayout extends FrameLayout {
   private final Camera camera = new Camera();
   private final Matrix matrix = new Matrix();
   private final int[] location = new int[2];
-  private final BitSet visibilities = new BitSet(CHILD_COUNT_ESTIMATION);
   private final SparseArray<String> idNames = new SparseArray<>();
-  private final Deque<LayeredView> layeredViewQueue = new ArrayDeque<>();
-  private final Pool<LayeredView> layeredViewPool = new Pool<LayeredView>(CHILD_COUNT_ESTIMATION) {
-    @Override protected LayeredView newObject() {
-      return new LayeredView();
-    }
-  };
+  private final Deque<ViewNode> viewNodeQueue = new ArrayDeque<>();
 
   private final Resources res;
   private final float density;
@@ -116,6 +96,8 @@ public class ScalpelFrameLayout extends FrameLayout {
   private float rotationX = ROTATION_DEFAULT_X;
   private float zoom = ZOOM_DEFAULT;
   private float spacing = SPACING_DEFAULT;
+
+  private ViewNode root;
 
   public ScalpelFrameLayout(Context context) {
     this(context, null);
@@ -149,6 +131,13 @@ public class ScalpelFrameLayout extends FrameLayout {
       this.enabled = enabled;
       setWillNotDraw(!enabled);
       invalidate();
+
+      if (enabled) {
+        root = new ViewNode(this, -1);
+      } else {
+        root.restoreVisibility();
+        root = null;
+      }
     }
   }
 
@@ -348,39 +337,13 @@ public class ScalpelFrameLayout extends FrameLayout {
     canvas.concat(matrix);
     canvas.scale(zoom, zoom, cx, cy);
 
-    if (!layeredViewQueue.isEmpty()) {
-      throw new AssertionError("View queue is not empty.");
-    }
-
     // We don't want to be rendered so seed the queue with our children.
-    for (int i = 0, count = getChildCount(); i < count; i++) {
-      LayeredView layeredView = layeredViewPool.obtain();
-      layeredView.set(getChildAt(i), 0);
-      layeredViewQueue.add(layeredView);
-    }
+    viewNodeQueue.addAll(root.children);
 
-    while (!layeredViewQueue.isEmpty()) {
-      LayeredView layeredView = layeredViewQueue.removeFirst();
-      View view = layeredView.view;
-      int layer = layeredView.layer;
-
-      // Restore the object to the pool for use later.
-      layeredView.clear();
-      layeredViewPool.restore(layeredView);
-
-      // Hide any visible children.
-      if (view instanceof ViewGroup) {
-        ViewGroup viewGroup = (ViewGroup) view;
-        visibilities.clear();
-        for (int i = 0, count = viewGroup.getChildCount(); i < count; i++) {
-          View child = viewGroup.getChildAt(i);
-          //noinspection ConstantConditions
-          if (child.getVisibility() == VISIBLE) {
-            visibilities.set(i);
-            child.setVisibility(INVISIBLE);
-          }
-        }
-      }
+    while (!viewNodeQueue.isEmpty()) {
+      ViewNode viewNode = viewNodeQueue.removeFirst();
+      View view = viewNode.view;
+      int layer = viewNode.level;
 
       int viewSaveCount = canvas.save();
 
@@ -410,18 +373,10 @@ public class ScalpelFrameLayout extends FrameLayout {
 
       canvas.restoreToCount(viewSaveCount);
 
-      // Restore any hidden children and queue them for later drawing.
-      if (view instanceof ViewGroup) {
-        ViewGroup viewGroup = (ViewGroup) view;
-        for (int i = 0, count = viewGroup.getChildCount(); i < count; i++) {
-          if (visibilities.get(i)) {
-            View child = viewGroup.getChildAt(i);
-            //noinspection ConstantConditions
-            child.setVisibility(VISIBLE);
-            LayeredView childLayeredView = layeredViewPool.obtain();
-            childLayeredView.set(child, layer + 1);
-            layeredViewQueue.add(childLayeredView);
-          }
+      // Queue any children for later drawing.
+      if (viewNode.hasChildren) {
+        for (ViewNode childNode : viewNode.children) {
+          viewNodeQueue.add(childNode);
         }
       }
     }
@@ -442,24 +397,77 @@ public class ScalpelFrameLayout extends FrameLayout {
     return name;
   }
 
-  private static abstract class Pool<T> {
-    private final Deque<T> pool;
+  private static class ViewNode {
+    private static final Rect CHILD_RECT = new Rect();
+    private static final Rect TEST_RECT = new Rect();
 
-    Pool(int initialSize) {
-      pool = new ArrayDeque<>(initialSize);
-      for (int i = 0; i < initialSize; i++) {
-        pool.addLast(newObject());
+    private final View view;
+    private final int level;
+    private final int layers;
+    private final boolean hasChildren;
+    private final List<ViewNode> children;
+
+    private ViewNode(View view, int level) {
+      this.view = view;
+      this.level = level;
+
+      if (view instanceof ViewGroup) {
+        ViewGroup viewGroup = (ViewGroup) view;
+        int childCount = viewGroup.getChildCount();
+        hasChildren = childCount > 0;
+        children = new ArrayList<>(childCount);
+        layers = noderizeChildren(viewGroup, level, children);
+      } else {
+        hasChildren = false;
+        children = Collections.emptyList();
+        layers = 0;
       }
     }
 
-    T obtain() {
-      return pool.isEmpty() ? newObject() : pool.removeLast();
+    private void restoreVisibility() {
+      view.setVisibility(VISIBLE);
+      for (ViewNode child : children) {
+        child.restoreVisibility();
+      }
     }
 
-    void restore(T instance) {
-      pool.addLast(instance);
-    }
+    private static int noderizeChildren(ViewGroup viewGroup, int level, List<ViewNode> children) {
+      int layers = 0;
+      for (int i = 0, count = viewGroup.getChildCount(); i < count; i++) {
+        View child = viewGroup.getChildAt(i);
 
-    protected abstract T newObject();
+        //noinspection ConstantConditions
+        if (child.getVisibility() != VISIBLE) {
+          continue;
+        }
+
+        child.getHitRect(CHILD_RECT);
+
+        // Detect draw overlap and position above any overlapping views.
+        int childLevel = level + 1;
+        for (ViewNode childNode : children) {
+          childNode.view.getHitRect(TEST_RECT);
+          if (TEST_RECT.intersect(CHILD_RECT)) {
+            if (DEBUG) log("Intersection: %s and %s", TEST_RECT, CHILD_RECT);
+            int childTopLevel = childNode.level + childNode.layers;
+            if (childTopLevel >= childLevel) {
+              childLevel = childTopLevel + 1;
+            }
+          }
+        }
+
+        ViewNode childNode = new ViewNode(child, childLevel);
+        int childLayers = childNode.layers + 1;
+        if (childLayers > layers) {
+          layers = childLayers;
+        }
+        children.add(childNode);
+
+        // Mark child invisible since we draw every view group with its children absent. We invoke
+        // draw directly on children thus bypassing the need for this view to even be visible.
+        child.setVisibility(INVISIBLE);
+      }
+      return layers;
+    }
   }
 }
