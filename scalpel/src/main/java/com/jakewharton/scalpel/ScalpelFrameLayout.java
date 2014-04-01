@@ -117,6 +117,9 @@ public class ScalpelFrameLayout extends FrameLayout {
   private float zoom = ZOOM_DEFAULT;
   private float spacing = SPACING_DEFAULT;
 
+  private int chromeColor;
+  private int chromeShadowColor;
+
   public ScalpelFrameLayout(Context context) {
     this(context, null);
   }
@@ -134,13 +137,41 @@ public class ScalpelFrameLayout extends FrameLayout {
     textSize = TEXT_SIZE_DP * density;
     textOffset = TEXT_OFFSET_DP * density;
 
-    viewBorderPaint.setColor(CHROME_COLOR);
+    setChromeColor(CHROME_COLOR);
     viewBorderPaint.setStyle(STROKE);
     viewBorderPaint.setTextSize(textSize);
-    viewBorderPaint.setShadowLayer(1, -1, 1, CHROME_SHADOW_COLOR);
+    setChromeShadowColor(CHROME_SHADOW_COLOR);
     if (Build.VERSION.SDK_INT >= JELLY_BEAN) {
       viewBorderPaint.setTypeface(Typeface.create("sans-serif-condensed", NORMAL));
     }
+  }
+
+  /** Set the view border chrome color. */
+  public void setChromeColor(int color) {
+    if (chromeColor != color) {
+      viewBorderPaint.setColor(color);
+      chromeColor = color;
+      invalidate();
+    }
+  }
+
+  /** Get the view border chrome color. */
+  public int getChromeColor() {
+    return chromeColor;
+  }
+
+  /** Set the view border chrome shadow color. */
+  public void setChromeShadowColor(int color) {
+    if (chromeShadowColor != color) {
+      viewBorderPaint.setShadowLayer(1, -1, 1, color);
+      chromeShadowColor = color;
+      invalidate();
+    }
+  }
+
+  /** Get the view border chrome shadow color. */
+  public int getChromeShadowColor() {
+    return chromeShadowColor;
   }
 
   /** Set whether or not the 3D view layer interaction is enabled. */
