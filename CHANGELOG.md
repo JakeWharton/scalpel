@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 1.1.2 *(2014-04-01)*
+----------------------------
+
+ * New: Add getters and setters for chrome color and shadow color.
+
+
 Version 1.1.1 *(2014-01-08)*
 ----------------------------
 
