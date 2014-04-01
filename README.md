@@ -15,6 +15,7 @@ Place a `ScalpelFrameLayout` at the root of your hierarchy.
  * Enable the 3D interaction with `setLayerInteractionEnabled(boolean)`.
  * Toggle wireframe display with `setDrawViews(boolean)`.
  * Toggle view ID display with `setDrawIds(boolean).`
+ * Change the wireframe color with `setChromeColor(int)` and `setChromeShadowColor(int)`.
 
 When interaction is enabled the following gestures are supported:
 
