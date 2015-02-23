@@ -1,16 +1,18 @@
-import com.android.builder.BuilderConstants;
+import com.android.builder.core.BuilderConstants;
 
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.9.+'
+    classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+    classpath 'com.android.tools.build:gradle:1.0.1'
   }
 }
 
-apply plugin: 'android-library'
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.library'
 
 android {
-  compileSdkVersion 19
-  buildToolsVersion "19.0.3"
+  compileSdkVersion 21
+  buildToolsVersion "21.1.1"
 
   defaultConfig {
     versionName VERSION_NAME
