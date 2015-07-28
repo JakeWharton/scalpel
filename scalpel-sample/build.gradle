@@ -1,21 +1,21 @@
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.9.+'
+    classpath 'com.android.tools.build:gradle:1.2.+'
   }
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 dependencies {
   compile project(':scalpel')
   compile 'com.jakewharton:butterknife:4.0.+'
   compile 'com.squareup.picasso:picasso:2.1.+'
-  compile 'com.android.support:support-v4:19.0.+'
+  compile 'com.android.support:support-v4:22.0.+'
 }
 
 android {
-  compileSdkVersion 19
-  buildToolsVersion "19.0.3"
+  compileSdkVersion 22
+  buildToolsVersion "22.0.1"
 
   defaultConfig {
     versionName VERSION_NAME

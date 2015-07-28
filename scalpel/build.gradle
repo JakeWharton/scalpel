@@ -1,16 +1,16 @@
-import com.android.builder.BuilderConstants;
+import com.android.builder.core.BuilderConstants
 
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.9.+'
+    classpath 'com.android.tools.build:gradle:1.2.+'
   }
 }
 
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 
 android {
-  compileSdkVersion 19
-  buildToolsVersion "19.0.3"
+  compileSdkVersion 22
+  buildToolsVersion "22.0.1"
 
   defaultConfig {
     versionName VERSION_NAME
