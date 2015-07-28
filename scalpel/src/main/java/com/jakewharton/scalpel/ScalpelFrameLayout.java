@@ -103,6 +103,7 @@ public class ScalpelFrameLayout extends FrameLayout {
   private boolean enabled;
   private boolean drawViews = true;
   private boolean drawIds;
+  private boolean drawClassNames;
 
   private int pointerOne = INVALID_POINTER_ID;
   private float lastOneX;
@@ -212,6 +213,19 @@ public class ScalpelFrameLayout extends FrameLayout {
   /** Returns true when view layers draw their IDs. */
   public boolean isDrawingIds() {
     return drawIds;
+  }
+
+  /** Set whether the view layers draw their class names. */
+  public void setDrawClassNames(boolean drawClassNames) {
+    if (this.drawClassNames != drawClassNames) {
+      this.drawClassNames = drawClassNames;
+      invalidate();
+    }
+  }
+
+  /** Returns true when view layers draw their class names. */
+  public boolean isDrawingClassNames() {
+    return drawClassNames;
   }
 
   @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -432,11 +446,17 @@ public class ScalpelFrameLayout extends FrameLayout {
         view.draw(canvas);
       }
 
-      if (drawIds) {
-        int id = view.getId();
-        if (id != NO_ID) {
-          canvas.drawText(nameForId(id), textOffset, textSize, viewBorderPaint);
+      if (drawId(view)) {
+          canvas.drawText(nameForId(view.getId()), textOffset, textSize, viewBorderPaint);
+      }
+
+      if(drawClassNames){
+        float offset = textSize;
+        if(drawId(view)){
+          // Add offset to appear under id text.
+          offset += textSize;
         }
+        canvas.drawText(view.getClass().getSimpleName(), textOffset, offset, viewBorderPaint);
       }
 
       canvas.restoreToCount(viewSaveCount);
@@ -471,6 +491,10 @@ public class ScalpelFrameLayout extends FrameLayout {
       idNames.put(id, name);
     }
     return name;
+  }
+
+  private boolean drawId(View view){
+    return drawIds && view.getId() != NO_ID;
   }
 
   private static abstract class Pool<T> {

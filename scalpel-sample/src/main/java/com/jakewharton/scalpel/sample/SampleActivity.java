@@ -75,6 +75,17 @@ public final class SampleActivity extends Activity {
             return true;
           }
         });
+    menu.add("Draw Class Names")
+            .setCheckable(true)
+            .setChecked(scalpelView.isDrawingClassNames())
+            .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+              @Override public boolean onMenuItemClick(MenuItem item) {
+                boolean checked = !item.isChecked();
+                item.setChecked(checked);
+                scalpelView.setDrawClassNames(checked);
+                return true;
+              }
+            });
     return true;
   }
 }
