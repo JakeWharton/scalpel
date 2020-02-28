@@ -1,6 +1,10 @@
 Scalpel
 ======
 
+DEPRECATED! Android Studio 4.0's layout inspector now includes a live-updating 3D view. Use it!
+
+---
+
 A surgical debugging tool to uncover the layers under your app.
 
 ![](images/sample.gif)
