@@ -14,6 +14,7 @@ A surgical debugging tool to uncover the layers under your app.
 Usage
 -----
 
+**NOTE**: This library is avaliable only for API 9 and above.
 Place a `ScalpelFrameLayout` at the root of your hierarchy.
 
  * Enable the 3D interaction with `setLayerInteractionEnabled(boolean)`.
